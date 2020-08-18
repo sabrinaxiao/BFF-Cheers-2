@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React , {useState} from 'react';
-import { StyleSheet, Text, View , Button, TextInput, FlatList} from 'react-native';
+import { StyleSheet, Text, View , Button, TextInput, FlatList, Alert, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import Header from './components/header';
 import CheersItem from './components/CheersItem'
 import AddCheers from './components/addCheers'
@@ -12,28 +12,39 @@ export default function App() {
     {text: 'Cheers to Mansoor for being a good boss', key:'2'}
   ]);
   const submitHandler = (text) => {
-    setCheers((prevCheers) => {
-      return [
-        {text: text, key: Math.random().toString() },
-        ...prevCheers
-      ]
-    })
+    if(text.length > 3){
+      setCheers((prevCheers) => {
+        return [
+          {text: text, key: Math.random().toString() },
+          ...prevCheers
+        ]
+      })
+    } else{
+      Alert.alert('Oops!', 'Cheers must be more than 3 characters long', [
+        {text: 'Okay', onPress: () => console.log('alert closed')}
+      ])
+    }
   }
   return (
-    <View style={styles.container}>
-      <Header />
-      <View style={styles.content}>
-        <AddCheers submitHandler={submitHandler}/>
-        <View style={styles.list}>
-          <FlatList 
-          data = {cheers}
-          renderItem={({item}) => (
-            <CheersItem item={item}/>
-          )}
-          />
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+      console.log('dismissed keyboard')
+    }}>
+      <View style={styles.container}>
+        <Header />
+        <View style={styles.content}>
+          <AddCheers submitHandler={submitHandler}/>
+          <View style={styles.list}>
+            <FlatList 
+            data = {cheers}
+            renderItem={({item}) => (
+              <CheersItem item={item}/>
+            )}
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
 
   )
 }
